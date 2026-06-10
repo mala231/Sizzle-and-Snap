@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { CartContext } from '../../context/CartContext';
+import { API_BASE_URL } from '../../utils/api';
 import { PlusIcon } from '@heroicons/react/24/solid';
 
 export default function MenuCard({ item, shopOpen }) {
@@ -15,7 +16,7 @@ export default function MenuCard({ item, shopOpen }) {
   };
 
   const imageSrc = imageUrl
-    ? `http://localhost:5000/uploads/${imageUrl}`
+    ? `${API_BASE_URL}/uploads/${imageUrl}`
     : null;
 
   const isSoldOut = !isAvailable;

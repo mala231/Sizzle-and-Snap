@@ -4,11 +4,11 @@ Update this file after every meaningful implementation change.
 
 ## Current Phase
 
-- **DEPLOYMENT PREP** 🚀 — Preparing for production deployment on Vercel + Railway
+- **DEPLOYMENT COMPLETE** 🎉 — Frontend deployed to Vercel, Backend deployed to Railway, connected to Railway PostgreSQL database.
 
 ## Current Goal
 
-- Deploy frontend to Vercel and backend to Railway
+- None (Fully deployed and verified)
 
 ## Completed
 
@@ -27,6 +27,7 @@ Update this file after every meaningful implementation change.
 - Unit 13 — Admin Shop Settings Page
 - Unit 14 — Admin Dashboard Home (Stats Overview) [bonus unit, not in original spec]
 - Unit 15 — Home Page + End-to-End Verification Pass
+- Deployment — Live production deployment on Vercel & Railway, with image uploads, database seeding, and dynamic CORS origin mapping complete.
 
 ## In Progress
 
@@ -34,7 +35,7 @@ Update this file after every meaningful implementation change.
 
 ## Next Up
 
-- Manual E2E verification pass (see walkthrough.md for full checklist)
+- None
 
 ## Open Questions
 

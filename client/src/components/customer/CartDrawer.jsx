@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
 import { AuthContext } from '../../context/AuthContext';
 import { applyDiscount } from '../../utils/discount';
+import { API_BASE_URL } from '../../utils/api';
 import { XMarkIcon, TrashIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 
 export default function CartDrawer({ isOpen, onClose }) {
@@ -62,7 +63,7 @@ export default function CartDrawer({ isOpen, onClose }) {
             ) : (
               items.map((item) => {
                 const imageSrc = item.imageUrl
-                  ? `http://localhost:5000/uploads/${item.imageUrl}`
+                  ? `${API_BASE_URL}/uploads/${item.imageUrl}`
                   : null;
                 const itemPrice = parseFloat(item.price) || 0;
 

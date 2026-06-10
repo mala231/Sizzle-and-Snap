@@ -6,3 +6,5 @@ client/.env
 /generated/prisma
 /server/uploads/
 /client/dist/
+
+.vercel

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
+import { API_BASE_URL } from '../../utils/api';
 import { PhotoIcon, ArrowUpTrayIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
@@ -60,7 +61,7 @@ export default function ImageUploader({ onFileSelect, currentImageUrl }) {
   };
 
   // Display priority: new preview > existing server image > empty zone
-  const displayImage = preview || (currentImageUrl ? `http://localhost:5000/uploads/${currentImageUrl}` : null);
+  const displayImage = preview || (currentImageUrl ? `${API_BASE_URL}/uploads/${currentImageUrl}` : null);
 
   return (
     <div className="space-y-xs">

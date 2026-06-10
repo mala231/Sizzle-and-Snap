@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import api from '../../utils/api';
+import api, { API_BASE_URL } from '../../utils/api';
 import MenuItemForm from '../../components/admin/MenuItemForm';
 import { 
   PlusIcon, 
@@ -9,8 +9,6 @@ import {
   PhotoIcon,
   Squares2X2Icon
 } from '@heroicons/react/24/outline';
-
-const SERVER_BASE = 'http://localhost:5000';
 
 export default function MenuManagerPage() {
   const [items, setItems] = useState([]);
@@ -205,7 +203,7 @@ export default function MenuManagerPage() {
                   <div className="w-14 h-14 rounded-lg bg-surface-container overflow-hidden shrink-0 border border-outline-variant/20">
                     {item.imageUrl ? (
                       <img
-                        src={`${SERVER_BASE}/uploads/${item.imageUrl}`}
+                        src={`${API_BASE_URL}/uploads/${item.imageUrl}`}
                         alt={item.name}
                         className="w-full h-full object-cover"
                       />
