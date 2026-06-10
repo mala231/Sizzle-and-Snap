@@ -83,8 +83,21 @@ export default function Sidebar() {
         </nav>
       </div>
 
-      {/* Logout button */}
-      <div>
+      {/* Store links and Logout */}
+      <div className="flex flex-col gap-xs">
+        {/* View Public Store Link */}
+        <NavLink
+          to="/"
+          className="w-full flex items-center gap-md p-md rounded-xl font-bold transition-all text-body-md justify-center md:justify-start text-on-surface-variant hover:text-primary hover:bg-surface-container"
+          title="Go to customer site"
+        >
+          <svg className="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+          <span className="hidden md:inline">View Public Store</span>
+        </NavLink>
+
+        {/* Logout button */}
         <button
           onClick={handleLogout}
           className="w-full flex items-center gap-md p-md rounded-xl font-bold transition-all text-body-md justify-center md:justify-start text-on-surface-variant hover:text-error hover:bg-error-container/20"
