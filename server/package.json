@@ -4,6 +4,7 @@
   "description": "Fast food vendor website backend",
   "main": "index.js",
   "scripts": {
+    "postinstall": "prisma generate",
     "dev": "nodemon index.js",
     "start": "node index.js"
   },
