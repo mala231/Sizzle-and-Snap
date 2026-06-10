@@ -9,7 +9,7 @@ const ORDER_STATUS = {
   COMPLETED: 'completed'
 };
 
-const CATEGORIES = ['Burgers', 'Fries', 'Drinks', 'Snacks'];
+const CATEGORIES = ['Burgers', 'Fries', 'Drinks', 'Snacks', 'Combos'];
 
 const DISCOUNT_RATE = 0.05;
 

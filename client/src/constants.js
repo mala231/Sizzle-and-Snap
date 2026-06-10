@@ -9,6 +9,6 @@ export const ORDER_STATUS = {
   COMPLETED: 'completed'
 };
 
-export const CATEGORIES = ['Burgers', 'Fries', 'Drinks', 'Snacks'];
+export const CATEGORIES = ['Burgers', 'Fries', 'Drinks', 'Snacks', 'Combos'];
 
 export const DISCOUNT_RATE = 0.05;
