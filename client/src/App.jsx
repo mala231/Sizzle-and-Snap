@@ -39,7 +39,7 @@ function CustomerLayout() {
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-background text-on-background font-body">
+      <div className="min-h-screen bg-background dark:bg-[#0d0c0c] text-on-background dark:text-zinc-100 font-body transition-colors duration-300">
         <Routes>
           {/* Customer Routes */}
           <Route element={<CustomerLayout />}>

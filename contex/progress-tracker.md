@@ -28,6 +28,7 @@ Update this file after every meaningful implementation change.
 - Unit 14 — Admin Dashboard Home (Stats Overview) [bonus unit, not in original spec]
 - Unit 15 — Home Page + End-to-End Verification Pass
 - Deployment — Live production deployment on Vercel & Railway, with image uploads, database seeding, and dynamic CORS origin mapping complete.
+- Redesign & Aesthetics — Implemented a modern class-based dark mode toggle in the Navbar, local theme storage, floating background glow animations, glassmorphic layout wrappers, and springy interactive scaling effects.
 
 ## In Progress
 
