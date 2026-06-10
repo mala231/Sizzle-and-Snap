@@ -92,12 +92,21 @@ export default function Navbar({ onOpenCart }) {
           <div className="hidden md:flex items-center gap-md border-l border-outline-variant/30 dark:border-zinc-800/40 pl-md">
             {user ? (
               <div className="flex items-center gap-md">
-                <Link 
-                  to="/account" 
-                  className="text-label-md font-bold text-on-surface dark:text-zinc-200 hover:text-primary-container dark:hover:text-primary transition-colors"
-                >
-                  Hi, {user.name.split(' ')[0]}
-                </Link>
+                {user.role === 'admin' ? (
+                  <Link 
+                    to="/admin" 
+                    className="text-label-md font-bold text-primary dark:text-primary hover:text-primary-container transition-colors"
+                  >
+                    Admin Dashboard
+                  </Link>
+                ) : (
+                  <Link 
+                    to="/account" 
+                    className="text-label-md font-bold text-on-surface dark:text-zinc-200 hover:text-primary-container dark:hover:text-primary transition-colors"
+                  >
+                    Hi, {user.name.split(' ')[0]}
+                  </Link>
+                )}
                 <button
                   onClick={handleLogout}
                   className="text-label-sm font-semibold text-on-surface-variant dark:text-zinc-400 hover:text-error dark:hover:text-error transition-colors"
@@ -150,13 +159,23 @@ export default function Navbar({ onOpenCart }) {
               Menu
             </Link>
             {user && (
-              <Link 
-                to="/account" 
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-label-md font-bold text-on-surface dark:text-zinc-200 p-sm hover:bg-surface-container dark:hover:bg-zinc-800 rounded-lg border-t border-outline-variant/10 dark:border-zinc-800/20 pt-md"
-              >
-                My Account
-              </Link>
+              user.role === 'admin' ? (
+                <Link 
+                  to="/admin" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-label-md font-bold text-primary p-sm hover:bg-surface-container dark:hover:bg-zinc-800 rounded-lg border-t border-outline-variant/10 dark:border-zinc-800/20 pt-md"
+                >
+                  Admin Dashboard
+                </Link>
+              ) : (
+                <Link 
+                  to="/account" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-label-md font-bold text-on-surface dark:text-zinc-200 p-sm hover:bg-surface-container dark:hover:bg-zinc-800 rounded-lg border-t border-outline-variant/10 dark:border-zinc-800/20 pt-md"
+                >
+                  My Account
+                </Link>
+              )
             )}
           </div>
 
