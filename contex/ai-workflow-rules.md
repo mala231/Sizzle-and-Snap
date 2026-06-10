@@ -1,0 +1,155 @@
+# AI Workflow Rules — Vendor Fast Food Website
+
+This file defines how an AI coding agent must behave while building, modifying, or debugging this project. These rules exist to keep work predictable, traceable, and aligned with the agreed design. Any agent working on this codebase is expected to follow these rules without exception.
+
+---
+
+## 1. Overall Approach
+
+**Spec-driven. Incremental. Verified.**
+
+- All work is driven by `project-overview.md`, `architecture.md`, and `code-standards.md`. These documents are the source of truth. If the code disagrees with these documents, the code is wrong — not the documents.
+- Work is broken into small, self-contained units. Each unit is completed and verified before the next unit begins. Do not open multiple units of work simultaneously.
+- The task tracker (`task.md`) is the active record of progress. It is updated at the start and end of every unit of work — not at the end of the session.
+- No feature is considered done until it passes the verification checklist in Section 7.
+
+---
+
+## 2. Scoping Rules
+
+**Do exactly what was asked. Nothing more.**
+
+- **One unit of work at a time.** A unit is one route, one component, one middleware function, or one migration — whichever is smallest and self-contained. Do not bundle multiple units into a single step unless they are logically inseparable (e.g. a Prisma migration and the schema change that triggers it).
+- **No speculative changes.** Do not modify files that are not required by the current unit of work. If you notice something unrelated that seems wrong, note it as a comment or flag it — do not fix it silently as a side effect of another task.
+- **No scope creep.** If completing the current unit of work would require touching something outside its defined scope, stop and flag it before proceeding. Do not expand the scope unilaterally.
+- **No preemptive abstractions.** Do not create utility functions, helpers, or abstractions "for future use." Build only what the current unit requires. Refactor later when duplication actually exists.
+- **No UI polish during logic implementation.** When building an API route or data model, do not adjust styling or layout. When building a UI component, do not add backend logic. Keep layers separate.
+
+---
+
+## 3. When to Split Work into Smaller Steps
+
+Split a task into smaller steps when any of the following are true:
+
+| Condition | Action |
+|---|---|
+| The task touches more than two files | Split by file |
+| The task involves both a schema change and a route change | Do the schema + migration first, verify, then write the route |
+| The task introduces a new auth or guard behaviour | Implement and test the guard in isolation before attaching it to routes |
+| The task involves both frontend and backend changes | Complete and verify the backend route first, then build the frontend component that consumes it |
+| The task requires a new database table | Create and migrate the schema first; seed test data; verify with a raw query before writing any route |
+| A single component handles more than one user-facing state (loading, error, success, empty) | Build and verify each state separately |
+| The description of the task takes more than three sentences to explain | It is too large — split it |
+
+When in doubt, split. A unit of work that takes 10 minutes and is verifiable is always better than one that takes 40 minutes and is not.
+
+---
+
+## 4. Handling Missing or Ambiguous Requirements
+
+**Never guess on behalf of the user. Always clarify first.**
+
+- If a requirement is missing (e.g. what happens when a guest submits an order with an empty cart), **stop and ask before writing any code**. State exactly what is ambiguous and propose two or three concrete options for the user to choose from.
+- If a requirement is present but vague (e.g. "show an error message"), ask for specifics: where, what text, what triggers it, does it auto-dismiss?
+- If two existing documents contradict each other, flag the contradiction explicitly and do not proceed until the user resolves it.
+- If a behaviour is implied by the system design but never explicitly stated, document the assumption clearly in a comment at the point of implementation and flag it to the user for confirmation.
+
+**Do not invent behaviour.** An invented behaviour that turns out to be wrong costs more time to undo than asking the question upfront.
+
+The only exception: purely cosmetic decisions (e.g. which shade of red to use for an error state, exact label wording) may be decided by the agent if they do not affect logic, data, or user flow — but must be noted so the user can review and override them.
+
+---
+
+## 5. Files That Must Not Be Modified Without Explicit Instruction
+
+The following files and directories are off-limits unless the user explicitly requests a change to them:
+
+| File / Directory | Reason |
+|---|---|
+| `prisma/migrations/` | Migration files are auto-generated by Prisma. Never edit them manually. Run `prisma migrate dev` to generate new ones. |
+| `project-overview.md` | Agreed project spec. Changes require user approval. |
+| `architecture.md` | Agreed system design. Changes require user approval. |
+| `code-standards.md` | Agreed coding rules. Changes require user approval. |
+| `ai-workflow-rules.md` | This file. Self-referential. Changes require user approval. |
+| `.env` | Environment secrets. Never read, write, or log the contents of `.env` during any task. |
+| `package-lock.json` / `package.json` | Do not add, remove, or upgrade packages without explicitly stating which package, which version, and why. |
+| `/server/uploads/` | Runtime file storage. Never write fixture or test files here. Never delete files here except as part of the menu item deletion flow. |
+
+If a task genuinely requires modifying one of these files, state the reason, show the exact change, and wait for confirmation before proceeding.
+
+---
+
+## 6. Keeping Documentation in Sync with Implementation
+
+Documentation and implementation must never diverge. The following rules enforce this:
+
+- **When a new route is added**, update the route protection matrix in `architecture.md` to include it, even if the change is a single row in a table.
+- **When a new database table or column is added**, update the Storage Model section in `architecture.md` to reflect it.
+- **When a new folder or file category is introduced** that does not exist in the File Organisation section of `code-standards.md`, add it with a one-line description.
+- **When a task is completed**, mark it as done in `task.md` before moving to the next task. Do not batch-update `task.md` at the end of a session.
+- **When a feature is added to the frontend**, verify that it matches the corresponding description in `project-overview.md`. If the implementation differs from the spec (even slightly), flag it and update the spec with user approval — do not silently diverge.
+- **When a scope decision is made** (e.g. choosing polling over WebSockets for order updates), document the reasoning in `architecture.md` under the relevant section so future agents or developers understand why, not just what.
+- **Do not leave TODO comments in committed code.** Either implement the thing or create a task in `task.md`. A TODO in source code is documentation debt.
+
+---
+
+## 7. Verification Checklist
+
+Before marking any unit of work as complete and moving to the next, run through this checklist. Every item must be confirmed — not assumed.
+
+### Backend (Route / Middleware / Schema)
+
+- [ ] The route returns the correct HTTP status code for success, invalid input, unauthorised, and not-found cases.
+- [ ] All required request fields are validated before any database call is made.
+- [ ] Auth guards are applied in the correct order (`authGuard` → `adminGuard`) on all protected routes.
+- [ ] No raw Prisma error or internal stack trace is exposed in any response body.
+- [ ] The response shape matches the standard: `{ data }` for success, `{ error, message }` for failure.
+- [ ] If a new Prisma model or field was added, `prisma migrate dev` was run and the migration file was generated cleanly.
+- [ ] If the route handles file uploads, the file is saved to `/server/uploads/` and only the filename is stored in the database.
+- [ ] If the route deletes a menu item, the associated image file is deleted from `/server/uploads/`.
+- [ ] The route was tested manually with at least one valid request and one invalid request.
+
+### Frontend (Component / Page / Hook)
+
+- [ ] The component handles all three data states: loading, error, and success.
+- [ ] No API call is made directly inside a component — all calls go through `utils/api.js`.
+- [ ] No hardcoded colour values appear in `className` strings — only Tailwind tokens or theme extensions.
+- [ ] The component is responsive: tested at mobile width (375px) and desktop width (1280px).
+- [ ] If the component is admin-only, it redirects to the admin login page when accessed without a valid admin token.
+- [ ] If the component renders a list, an empty-state UI is shown when the list has zero items.
+- [ ] Cart totals reflect the 5% discount for registered users and no discount for guests.
+
+### General (Any Unit)
+
+- [ ] `task.md` has been updated: the completed task is marked `[x]`.
+- [ ] No files outside the scope of this task were modified.
+- [ ] No new packages were installed without stating the reason.
+- [ ] No secrets, passwords, or tokens appear in any file except `.env`.
+- [ ] The code follows the naming conventions and structure defined in `code-standards.md`.
+- [ ] Any assumption made during implementation is documented in a comment or flagged to the user.
+
+---
+
+## 8. Error Handling Protocol
+
+When something goes wrong during implementation:
+
+1. **Stop immediately.** Do not attempt a second approach without understanding why the first failed.
+2. **Read the full error message.** Do not skim. The exact error message, file, and line number matter.
+3. **Identify the root cause** before proposing a fix. State the root cause explicitly.
+4. **Propose one fix at a time.** Do not apply multiple speculative fixes simultaneously and hope one works.
+5. **If the root cause is unclear after two attempts**, escalate to the user with: the error message, what was tried, and what is still unknown.
+6. **Never suppress errors** with empty `catch` blocks, `try/catch` with no handler, or `console.log("error")` without re-throwing or returning a response.
+
+---
+
+## 9. Session Start Protocol
+
+At the beginning of every working session, before writing any code:
+
+1. Read `task.md` and identify the next incomplete task.
+2. Read the relevant section of `project-overview.md` and `architecture.md` for context.
+3. State the plan: what file(s) will be touched, what the expected output is, and how it will be verified.
+4. Wait for confirmation if the plan involves any file listed in Section 5 or any ambiguity identified in Section 4.
+
+Do not begin coding until the plan is clear.

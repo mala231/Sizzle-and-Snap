@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  name         String
+  phone        String
+  passwordHash String   @map("password_hash")
+  role         String   @default("customer") // "admin" or "customer"
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  orders       Order[]
+
+  @@map("users")
+}
+
+model MenuItem {
+  id          Int         @id @default(autoincrement())
+  name        String
+  description String
+  price       Decimal     @db.Decimal(10, 2)
+  category    String      // "Burgers", "Fries", "Drinks", "Snacks"
+  imageUrl    String?     @map("image_url")
+  isAvailable Boolean     @default(true) @map("is_available")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  orderItems  OrderItem[]
+
+  @@map("menu_items")
+}
+
+model Order {
+  id              Int         @id @default(autoincrement())
+  userId          Int?        @map("user_id")
+  user            User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  customerName    String      @map("customer_name")
+  customerPhone   String      @map("customer_phone")
+  status          String      @default("pending") // "pending", "ready", "completed"
+  totalAmount     Decimal     @map("total_amount") @db.Decimal(10, 2)
+  discountApplied Boolean     @default(false) @map("discount_applied")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+  orderItems      OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id         Int      @id @default(autoincrement())
+  orderId    Int      @map("order_id")
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId Int      @map("menu_item_id")
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+  quantity   Int
+  unitPrice  Decimal  @map("unit_price") @db.Decimal(10, 2)
+
+  @@map("order_items")
+}
+
+model ShopSettings {
+  id             Int      @id @default(autoincrement())
+  isOpenOverride Boolean? @map("is_open_override")
+  openTime       String   @default("10:00") @map("open_time")
+  closeTime      String   @default("16:00") @map("close_time")
+
+  @@map("shop_settings")
+}
