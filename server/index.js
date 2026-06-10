@@ -20,24 +20,28 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// 1. CORS — allow localhost in dev and the production Vercel domain
+// 1. CORS — allow localhost in dev, the production Vercel domain, and all Vercel preview URLs
 // Strip any accidental trailing slash from CORS_ORIGIN (browsers send Origin without one)
 const rawCorsOrigin = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.replace(/\/$/, '')
   : null;
 
+// Exact-match origins (localhost + env override)
 const allowedOrigins = new Set([
   'http://localhost:5173',
   'http://localhost:4173',
-  'https://sizzle-and-snap.vercel.app', // hardcoded production frontend
   rawCorsOrigin,
 ].filter(Boolean));
+
+// Also allow the production domain AND any Vercel preview deployment for this project
+// e.g. sizzle-and-snap.vercel.app  OR  sizzle-and-snap-abc123-mala-s-projects5.vercel.app
+const vercelPreviewRegex = /^https:\/\/sizzle-and-snap(-[a-z0-9-]+)?\.vercel\.app$/;
 
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (curl, Postman, mobile apps)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.has(origin)) {
+    if (allowedOrigins.has(origin) || vercelPreviewRegex.test(origin)) {
       return callback(null, true);
     }
     // Return false (not an error) so Express doesn't strip CORS headers from 4xx responses
