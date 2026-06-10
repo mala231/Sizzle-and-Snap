@@ -21,10 +21,12 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 // 1. CORS — allow localhost in dev and the production Vercel domain
+// Strip any accidental trailing slash from CORS_ORIGIN (browsers send Origin without one)
+const rawCorsOrigin = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.replace(/\/$/, '') : null;
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:4173',
-  process.env.CORS_ORIGIN, // e.g. https://your-app.vercel.app
+  rawCorsOrigin,
 ].filter(Boolean);
 
 app.use(cors({
