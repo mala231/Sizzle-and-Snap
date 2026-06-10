@@ -47,7 +47,10 @@ app.use(express.json());
 // 3. Static files
 app.use('/uploads', express.static(uploadsDir));
 
-// 4. Routes
+// 4. Health check (no DB required)
+app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
+
+// 5. Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/menu', menuRoutes);
 app.use('/api/menu', uploadsRoutes);
