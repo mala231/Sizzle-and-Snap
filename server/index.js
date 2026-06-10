@@ -22,21 +22,27 @@ if (!fs.existsSync(uploadsDir)) {
 
 // 1. CORS — allow localhost in dev and the production Vercel domain
 // Strip any accidental trailing slash from CORS_ORIGIN (browsers send Origin without one)
-const rawCorsOrigin = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.replace(/\/$/, '') : null;
-const allowedOrigins = [
+const rawCorsOrigin = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.replace(/\/$/, '')
+  : null;
+
+const allowedOrigins = new Set([
   'http://localhost:5173',
   'http://localhost:4173',
+  'https://sizzle-and-snap.vercel.app', // hardcoded production frontend
   rawCorsOrigin,
-].filter(Boolean);
+].filter(Boolean));
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (curl, Postman, server-to-server)
+    // Allow requests with no origin (curl, Postman, mobile apps)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
+    if (allowedOrigins.has(origin)) {
       return callback(null, true);
     }
-    return callback(new Error(`CORS: origin ${origin} not allowed`));
+    // Return false (not an error) so Express doesn't strip CORS headers from 4xx responses
+    console.warn(`CORS: blocked origin "${origin}"`);
+    return callback(null, false);
   },
   credentials: true,
 }));
